@@ -24,9 +24,9 @@ public class BuildingServiceImpl implements BuildingService {
     private ApartmentRepository apartmentRepository;
 
     @Override
-    public void createBuilding(BuildingDTO buildingDTO, boolean apartmentsCount) {
+    public void createBuilding(BuildingDTO buildingDTO, int  apartmentsCount) {
 
-        if (apartmentsCount) {
+        if (apartmentsCount!=0) {
             buildingRepository.save(convertToBuilding(buildingDTO));
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
@@ -39,6 +39,10 @@ public class BuildingServiceImpl implements BuildingService {
     @Override
     public List<BuildingDTO> getBuildingsByStreet(String street) {
         List<Building> buildings = buildingRepository.findAllByStreet(street);
+        if (buildings.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    String.format("No such buildings on the %s street",street));
+        }
         return buildings.stream().map(building ->
                 BuildingDTO.builder()
                         .id(building.getId())
@@ -47,6 +51,15 @@ public class BuildingServiceImpl implements BuildingService {
                         .apartmentsCount(apartmentRepository.findAllByBuilding_Id(building.getId()).size())
                         .build()
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteBuilding(Long buildingId) {
+        Building building = buildingRepository.findById(buildingId)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        String.format("No owner with %s id",buildingId)));
+        buildingRepository.delete(building);
+
     }
 
     private Building convertToBuilding(BuildingDTO buildingDTO) {

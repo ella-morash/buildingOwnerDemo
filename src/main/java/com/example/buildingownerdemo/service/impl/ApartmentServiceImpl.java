@@ -5,7 +5,9 @@ import com.example.buildingownerdemo.entity.Apartment;
 import com.example.buildingownerdemo.repository.ApartmentRepository;
 import com.example.buildingownerdemo.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,9 @@ public class ApartmentServiceImpl implements ApartmentService {
            apartments = apartmentRepository.findAllByBuilding_Id(buildingId);
 
 
+        }
+        if (apartments.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,String.format("No apartments with %s id",buildingId));
         }
         return  apartments.stream().map(apartment ->
                 ApartmentDTO.builder()

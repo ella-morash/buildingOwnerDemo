@@ -18,13 +18,18 @@ public class BuildingController {
 
     @PostMapping(path = "/buildings/")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createBuilding(@RequestBody BuildingDTO buildingDTO,@RequestParam(name = "apartmentsCount",required = false)boolean apartmentsCount) {
+    public void createBuilding(@RequestBody BuildingDTO buildingDTO,@RequestParam(name = "apartmentsCount")int  apartmentsCount) {
         buildingService.createBuilding(buildingDTO,apartmentsCount);
     }
 
     @GetMapping(path = "/buildings/")
     public List<BuildingDTO> getBuildingsByStreet(@RequestParam(name = "street")String street) {
         return buildingService.getBuildingsByStreet(street);
+    }
+
+    @DeleteMapping(path = "/buildings/{id}/demolish")
+    public void deleteBuilding(@PathVariable("id") Long buildingId) {
+        buildingService.deleteBuilding(buildingId);
     }
 
 }

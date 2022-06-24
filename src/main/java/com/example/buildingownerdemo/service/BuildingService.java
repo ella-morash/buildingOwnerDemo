@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface BuildingService {
 
-    void createBuilding(BuildingDTO buildingDTO,boolean apartmentsCount);
+    void createBuilding(BuildingDTO buildingDTO,int apartmentsCount);
     List<BuildingDTO> getBuildingsByStreet(String street);
+
+    void deleteBuilding(Long buildingId);
 }
